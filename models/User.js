@@ -3,6 +3,13 @@ const {isEmail} = require('validator')
 const bcrypt = require('bcrypt')
 
 const userSchema = new mongoose.Schema({
+    idUser: {
+        type: Number,
+        unique: true,
+        default: () => {
+          return User.countDocuments().then(count => count + 1);
+        }
+      },
     email:{
         type:String,
         required:[true,'please enter an email'],
@@ -21,7 +28,9 @@ const userSchema = new mongoose.Schema({
     country:{type:String},
     phone:{type:String},
     isTeacher:{type:String},
-    profile:{type: String}
+    profile:{type: String},
+    learnlang:{type: [String]},
+    teachlang:{type: [String]}
 })
 
 
@@ -60,6 +69,11 @@ userSchema.statics.loginReset = async function(email){
      
     throw Error('incorrect email')
 }
+
+userSchema.statics.getNextIdUser = async function() {
+    const user = await this.findOne().sort({ idUser: -1 });
+    return user ? user.idUser + 1 : 1;
+  };
 
 const User = mongoose.model('user', userSchema);
 

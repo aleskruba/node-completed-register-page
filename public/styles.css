@@ -302,6 +302,12 @@ header .btn{
   font-size: 13px;
 }
 
+
+.imageTypeError{
+  font-size: 13px;
+  font-weight: 800;
+  color: red;
+}
 .updateSelectDiv{
   display: flex;
   flex-direction: row;

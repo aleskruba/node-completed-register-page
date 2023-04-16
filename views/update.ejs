@@ -19,6 +19,11 @@
   <div class="phone error"></div>
   <ul class="phonelist"> </ul>
 
+  <label for="language">Languages</label>
+  <input type="text" name="language" id="languageInput" class='languageInput' value=""/>
+  <div class="language error"></div>
+  <ul class="languagelist"> </ul>
+
   <div class="updateSelectDiv">
     <div>
           <label for="teacher">Also a teacher</label>
@@ -51,6 +56,7 @@ const countryError = document.querySelector('.country.error');
 const phoneError = document.querySelector('.phone.error')
 const countryInput = document.querySelector('.countryInput')
 const countryPhoneInput= document.querySelector('.countryPhoneInput')
+const languageInput= document.querySelector('.languageInput')
 
 countryError.textContent = '';
 phoneError.textContent = ''
@@ -149,6 +155,7 @@ form.addEventListener('submit', async function (event) {
   const country = form.country.value;
   const phone = form.phone.value;
   const isTeacher = form.teacher.value;
+  const language = form.language.value;
 
 
   let isValidCountry = false;
@@ -184,8 +191,9 @@ form.addEventListener('submit', async function (event) {
 
   try {
     const res = await fetch('/update', {
+      
       method: 'PUT',
-      body: JSON.stringify({ firstName, lastName, country, phone, isTeacher }),
+      body: JSON.stringify({ firstName, lastName, country, phone, isTeacher, language }),
       headers: { 'Content-Type': 'application/json' }
     });
     const data = await res.json();

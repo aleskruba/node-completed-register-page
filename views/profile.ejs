@@ -16,6 +16,15 @@
       <li class="ProfileLI"><div>COUNTRY :</div> <div><%=user.country%></li>
       <li class="ProfileLI"><div>PHONE :</div> <div><%=user.phone%></li>
       <li class="ProfileLI"><div>TEACHER :</div> <div><%=user.isTeacher%></div> </li>
+      <li class="ProfileLI"><div>Languages :</div> <div>
+        <ul>
+          <% if (Array.isArray(user.learnlang)) { %>
+            <% user.learnlang.map((lang) => { %>
+              <li><%= lang %></li>
+            <% }) %>
+          <% } %>
+        </ul>
+    </div> </li>
    
     <li><div class="updateButton"><a href="/update" class="btn"><div class="btnStart">Update Profile </div> </a><a href="/"> <div class="btnStart" style="margin-left: 20px; background-color: gray;"> Back </div></a> </div>   </li>
     <li><div class="resetButton"><a href="/changepassword" class="btn"><div class="btnReset">Reset Password </div> </a></div>   </li>
@@ -49,6 +58,7 @@
 
 
       </span>
+      <div class="imageTypeError"></div>
     
       </div>
     </div>
@@ -62,15 +72,25 @@
 const form = document.querySelector('form');
 function selectFile() {
   document.getElementById('profile').click();
+
+
 }
 
-
+const imageTypeError = document.querySelector('.imageTypeError')
+  imageTypeError.textContent = ''
   async function onUpload() {
   const fileInput = document.getElementById('profile');
   const file = fileInput.files[0];
   const base64String = await convertToBase64(file);
   console.log("Original file size:", base64String.length / 1024, "kB");
+  
+  const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
 
+  if (!allowedTypes.includes(file.type)) {
+    fileInput.value = ''; // clear the file input
+    imageTypeError.textContent = 'Only JPEG, JPG, and PNG files are allowed.';
+    //throw new Error('Only JPEG, JPG, and PNG files are allowed.');
+  } else {
   // Resize the image if it is larger than 100kB
   if (base64String.length > 100 * 1024) {
     const image = new Image();
@@ -151,6 +171,12 @@ function selectFile() {
       console.log('error',err);
     }
   }
+
+
+
+  }
+
+
 }
 
 

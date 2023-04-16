@@ -49,7 +49,7 @@ const handleErrors = (err) => {
 
 const createToken = (id) => {
   return jwt.sign({ id }, process.env.KEY, {
-    expiresIn: '1m'
+    expiresIn: '1d'
   });
 };
 
@@ -75,12 +75,12 @@ module.exports.refresh_token_post = async (req, res) => {
 };
 
 
-
 module.exports.signup_post = async (req, res) => {
   const { email, password} = req.body;
 
   try {
-    const user = await User.create({ email, password });
+    const idUser = await User.getNextIdUser();
+    const user = await User.create({ idUser, email, password });
     const accessToken = createToken(user._id);
     const refreshToken = createRefreshToken(user._id);
     res.cookie('jwt', accessToken, { httpOnly: true, maxAge: 15 * 60 * 1000 });
@@ -128,6 +128,7 @@ module.exports.fpassword_get = (req, res) => {
 
 module.exports.update_put = async (req, res, next) => {
   const body = req.body;
+  const lang = req.body.language
 
   const token = req.cookies.jwt;
   if (token) {
@@ -139,7 +140,7 @@ module.exports.update_put = async (req, res, next) => {
         let user = await User.findById(decodedToken.id);
         res.locals.user = user;
         try {
-          await User.updateOne({ _id: user._id }, body);
+          await User.updateOne({ _id: user._id }, { $addToSet: { learnlang: lang }, ...body });
           res.status(201).json({ user: user._id });
         } catch (err) {
           const errors = handleErrors(err);
